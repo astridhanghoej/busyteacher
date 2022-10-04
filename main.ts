@@ -7,9 +7,24 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
         pause(1000)
     }
 })
+controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (astrid.overlapsWith(whoNeedsHelp[0])) {
+        astrid.sayText("this student needed help next", 500, false)
+        whoNeedsHelp.shift()
+    } else {
+        astrid.sayText("this student didn't need help")
+    }
+})
+function isGameOver () {
+    if (whoNeedsHelp.length >= 10) {
+        game.over(false)
+    }
+}
 let student: Sprite = null
+let astrid: Sprite = null
+let whoNeedsHelp: Sprite[] = []
 let randomNumber = 0
-let whoNeedsHelp: number[] = []
+whoNeedsHelp = []
 let linesToSay = [
 "I need help",
 "This doesn't work",
@@ -18,8 +33,8 @@ let linesToSay = [
 "I am lost",
 "Can I ask you a quick question?"
 ]
-let gameSpeed = 2000
-let astrid = sprites.create(img`
+let gameSpeed = 5000
+astrid = sprites.create(img`
     ..............................................................................................................
     ..............................................................................................................
     ..............................................................................................................
@@ -310,4 +325,6 @@ console.log("length of playerKind is " + sprites.allOfKind(SpriteKind.Player).le
 game.onUpdateInterval(gameSpeed, function () {
     randomNumber = randint(0, sprites.allOfKind(SpriteKind.Player).length - 1)
     sprites.allOfKind(SpriteKind.Player)[randomNumber].sayText(linesToSay._pickRandom(), 500, false)
+    whoNeedsHelp.unshift(sprites.allOfKind(SpriteKind.Player)[randomNumber])
+    isGameOver()
 })
